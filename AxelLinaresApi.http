@@ -1,0 +1,6 @@
+@AxelLinaresApi_HostAddress = http://localhost:5139
+
+GET {{AxelLinaresApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
