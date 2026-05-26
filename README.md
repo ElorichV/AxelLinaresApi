@@ -1,99 +1,121 @@
-
 # AxelLinaresApi (Backend)
 
-API REST desarrollada en .NET 8 para la gestión de un portafolio profesional dinámico. Utiliza una arquitectura **Code-First** con Entity Framework Core y una base de datos autocontenida.
+[🇺🇸 English](README.md) | [🇪🇸 Español](README.es.md)
 
-## 🛠 Tecnologías y Arquitectura
+---
+
+REST API developed in .NET 8 for managing a dynamic professional portfolio. Uses a **Code-First** architecture with Entity Framework Core and a self-contained database.
+
+## 🛠 Technologies & Architecture
 
 - **Framework**: .NET 8 (ASP.NET Core Web API)
 - **ORM**: Entity Framework Core 9.0
-- **Base de Datos**: SQLite (Autocontenida en el despliegue)
-- **Documentación**: Swagger/OpenAPI
-- **Infraestructura**: AWS Elastic Beanstalk (Windows Server + IIS)
+- **Database**: SQLite (Self-contained in deployment)
+- **Documentation**: Swagger/OpenAPI
+- **Infrastructure**: AWS Elastic Beanstalk (Windows Server + IIS)
 
-## 📂 Estructura del Proyecto
+## 📂 Project Structure
 
-- `Controllers/`: Endpoints de la API (e.g., `ProfileController`).
-- `Data/`: Lógica de datos (`ProfileDbContext`) y sembrado inicial (`DataSeeder`).
-- `Models/`: Definición de entidades (`UserProfile`, `Project`, `Skill`, etc.).
-- `Migrations/`: Historial de cambios de esquema de base de datos.
-- `Properties/`: Configuraciones de lanzamiento (`launchSettings.json`).
+```
+AxelLinaresApi/
+├── Controllers/           # API endpoints
+│   └── ProfileController.cs
+├── Data/                  # Data access logic
+│   ├── ProfileDbContext.cs
+│   └── DataSeeder.cs
+├── Models/                # Domain entities
+│   └── UserProfile.cs
+├── Migrations/            # Database schema history (EF Core)
+│   ├── InitialCreate.cs
+│   └── ProfileDbContextModelSnapshot.cs
+├── Properties/            # Project configurations
+│   ├── PublishProfiles/   # Publishing profiles
+│   └── launchSettings.json
+├── .ebextensions/         # AWS Elastic Beanstalk configurations
+│   └── 01_aspnetcore.config
+├── .github/workflows/     # CI/CD (GitHub Actions)
+├── publish-linux/         # Publishing artifacts
+├── Program.cs             # Application entry point
+├── profile.db             # SQLite database
+├── web.config             # IIS configuration
+└── AxelLinaresApi.csproj  # .NET project file
+```
 
-## 🚀 Desarrollo Local
+## 🚀 Local Development
 
-1. **Restaurar dependencias:**
+1. **Restore dependencies:**
    ```bash
    dotnet restore
    ```
 
-2. **Ejecutar la aplicación:**
+2. **Run the application:**
    ```bash
    dotnet run
    ```
-   O presiona F5 en Visual Studio. La API estará disponible en el puerto configurado (ej. https://localhost:7081) y abrirá Swagger automáticamente.
+   Or press F5 in Visual Studio. The API will be available on the configured port (e.g., https://localhost:7081) and will open Swagger automatically.
 
-## ☁️ Despliegue en AWS Elastic Beanstalk
+## ☁️ AWS Elastic Beanstalk Deployment
 
-### URL de Producción
-El endpoint principal de datos se encuentra en: http://axellinaresapi-env.eba-paimdqea.us-east-2.elasticbeanstalk.com/api/Profile
+### Production URL
+The main data endpoint is located at: http://axellinaresapi-env.eba-paimdqea.us-east-2.elasticbeanstalk.com/api/Profile
 
-### Configuración Exitosa del Entorno
-Para replicar este despliegue, se deben usar las siguientes configuraciones específicas:
+### Successful Environment Configuration
+To replicate this deployment, use the following specific configurations:
 
-- **Plataforma**: .NET on Windows Server
-- **Versión**: Windows Server 2025 con IIS
-- **Tipo de Instancia**: t3.micro (Crucial para compatibilidad UEFI y Capa Gratuita)
-- **Proxy Inverso**: IIS (Predeterminado)
+- **Platform**: .NET on Windows Server
+- **Version**: Windows Server 2025 with IIS
+- **Instance Type**: t3.micro (Critical for UEFI compatibility and Free Tier)
+- **Reverse Proxy**: IIS (Default)
 
-### Pasos de Publicación (Método Manual)
-1. En Visual Studio, clic derecho al proyecto -> Publicar.
-2. Seleccionar destino: Carpeta.
-3. Generar la publicación.
-4. Ir a la carpeta de salida y comprimir el contenido (los archivos) en un .zip.
-5. Subir el .zip manualmente en la consola de Elastic Beanstalk.
+### Publishing Steps (Manual Method)
+1. In Visual Studio, right-click the project -> Publish.
+2. Select target: Folder.
+3. Generate the publication.
+4. Go to the output folder and compress the content (files) into a .zip.
+5. Upload the .zip manually in the Elastic Beanstalk console.
 
-## 🔧 Bitácora de Problemas y Soluciones (Troubleshooting)
-Durante el ciclo de vida de desarrollo y despliegue, se resolvieron los siguientes desafíos técnicos críticos:
+## 🔧 Troubleshooting Log
+During the development and deployment lifecycle, the following critical technical challenges were resolved:
 
-### 1. Error de Despliegue: "Instance type not eligible for Free Tier"
-**Síntoma**: El entorno fallaba al crearse (CREATE_FAILED) porque intentaba lanzar instancias t3.medium o t3.large.
+### 1. Deployment Error: "Instance type not eligible for Free Tier"
+**Symptom**: Environment failed to create (CREATE_FAILED) because it tried to launch t3.medium or t3.large instances.
 
-**Solución**: Se configuró manualmente la sección "Capacidad" para eliminar las instancias por defecto y seleccionar únicamente t3.micro, asegurando el uso de la Capa Gratuita de AWS.
+**Solution**: Manually configured the "Capacity" section to remove default instances and select only t3.micro, ensuring Free Tier usage.
 
-### 2. Error de Compatibilidad: "UEFI boot mode not supported on t2.micro"
-**Síntoma**: Se intentó usar t2.micro (la instancia gratuita clásica), pero falló porque Windows Server 2025 requiere arranque UEFI, que t2 no soporta.
+### 2. Compatibility Error: "UEFI boot mode not supported on t2.micro"
+**Symptom**: Attempted to use t2.micro (classic free instance), but failed because Windows Server 2025 requires UEFI boot, which t2 doesn't support.
 
-**Solución**: Se migró la configuración a t3.micro, que pertenece a la familia Nitro, soporta UEFI y también es elegible para la capa gratuita.
+**Solution**: Migrated configuration to t3.micro, which belongs to the Nitro family, supports UEFI, and is also Free Tier eligible.
 
-### 3. Error de Salud: Estado "Severe / No Data"
-**Síntoma**: El entorno se creaba pero quedaba en rojo. Elastic Beanstalk no recibía respuesta del Health Check.
+### 3. Health Error: "Severe / No Data" Status
+**Symptom**: Environment was created but remained red. Elastic Beanstalk received no response from Health Check.
 
-**Causa**: El Health Check por defecto busca en la raíz /, pero la API no tiene nada ahí; solo responde en /api/Profile.
+**Cause**: Default Health Check looks at root /, but the API has nothing there; it only responds at /api/Profile.
 
-**Solución**: Se modificó la configuración del Load Balancer (Procesos) para cambiar la "Ruta de comprobación de estado" a: /api/Profile.
+**Solution**: Modified Load Balancer configuration (Processes) to change the "Health check path" to: /api/Profile.
 
-### 4. Error en Runtime: "Command hooks failed" (Crash al inicio)
-**Síntoma**: La aplicación fallaba inmediatamente al arrancar en el servidor nuevo.
+### 4. Runtime Error: "Command hooks failed" (Startup crash)
+**Symptom**: Application failed immediately when starting on the new server.
 
-**Causa**: La aplicación intentaba "sembrar" datos, pero la base de datos profile.db no existía físicamente en el servidor nuevo.
+**Cause**: Application tried to "seed" data, but the profile.db database didn't physically exist on the new server.
 
-**Solución**: Se agregó context.Database.Migrate(); en Program.cs justo antes del Seeder. Esto fuerza a EF Core a crear el archivo de base de datos automáticamente al iniciar la app.
+**Solution**: Added context.Database.Migrate(); in Program.cs just before the Seeder. This forces EF Core to automatically create the database file when starting the app.
 
-### 5. Error de Red: "Invalid option value: 'null' for Subnets"
-**Síntoma**: Fallo al crear el entorno por configuración de VPC incompleta.
+### 5. Network Error: "Invalid option value: 'null' for Subnets"
+**Symptom**: Failed to create environment due to incomplete VPC configuration.
 
-**Solución**: En el paso de configuración de redes, se marcaron explícitamente todas las casillas de las subredes disponibles (us-east-2a, 2b, 2c).
+**Solution**: In the network configuration step, explicitly checked all available subnet boxes (us-east-2a, 2b, 2c).
 
-### 6. Error de Desarrollo: "Espacio de nombres duplicado"
-**Síntoma**: El proyecto dejó de compilar localmente.
+### 6. Development Error: "Duplicate namespace"
+**Symptom**: Project stopped compiling locally.
 
-**Causa**: Código del controlador se copió accidentalmente dentro de un archivo de Migración generado automáticamente.
+**Cause**: Controller code was accidentally copied inside an automatically generated Migration file.
 
-**Solución**: Se eliminó la carpeta Migrations y el archivo profile.db local para regenerar una migración limpia (Add-Migration InitialCreate).
+**Solution**: Deleted the Migrations folder and local profile.db file to regenerate a clean migration (Add-Migration InitialCreate).
 
-## Características Clave Implementadas
+## Key Implemented Features
 
-- **Inyección de Dependencias**: Configurada en Program.cs para el DbContext.
-- **Code-First Migration**: La estructura de la BD se genera desde el código C#.
-- **Auto-Seeding Inteligente**: El sistema detecta si la BD está vacía y la puebla con el perfil profesional automáticamente.
-- **CORS Global**: Política configurada para permitir peticiones desde el Frontend (S3/CloudFront).
+- **Dependency Injection**: Configured in Program.cs for DbContext.
+- **Code-First Migration**: Database structure is generated from C# code.
+- **Smart Auto-Seeding**: System detects if database is empty and populates it with professional profile automatically.
+- **Global CORS**: Policy configured to allow requests from Frontend (S3/CloudFront).

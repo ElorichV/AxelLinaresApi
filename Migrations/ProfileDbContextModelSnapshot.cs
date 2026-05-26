@@ -22,15 +22,18 @@ namespace AxelLinaresApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("CredentialUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IssuingOrganization")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -40,171 +43,7 @@ namespace AxelLinaresApi.Migrations
                     b.ToTable("Certifications");
                 });
 
-            modelBuilder.Entity("AxelLinaresApi.Models.Education", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Dates")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Degree")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Institution")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("EducationHistory");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Hobby", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Hobbies");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Link", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Links");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Project", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ProjectUrl")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RepoUrl")
-                        .HasColumnType("TEXT");
-
-                    b.PrimitiveCollection<string>("Technologies")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Skill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("UserProfileId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Skills");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.UserProfile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserProfiles");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.WorkExperience", b =>
+            modelBuilder.Entity("AxelLinaresApi.Models.Experience", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -222,11 +61,11 @@ namespace AxelLinaresApi.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.PrimitiveCollection<string>("Responsibilities")
+                    b.Property<string>("Responsibilities")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("UserProfileId")
+                    b.Property<int>("UserProfileId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -236,70 +75,115 @@ namespace AxelLinaresApi.Migrations
                     b.ToTable("Experiences");
                 });
 
+            modelBuilder.Entity("AxelLinaresApi.Models.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProjectUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("AxelLinaresApi.Models.UserProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("GitHubUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HardSkills")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LinkedInUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SoftSkills")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserProfiles");
+                });
+
             modelBuilder.Entity("AxelLinaresApi.Models.Certification", b =>
                 {
                     b.HasOne("AxelLinaresApi.Models.UserProfile", null)
                         .WithMany("Certifications")
-                        .HasForeignKey("UserProfileId");
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("AxelLinaresApi.Models.Education", b =>
+            modelBuilder.Entity("AxelLinaresApi.Models.Experience", b =>
                 {
                     b.HasOne("AxelLinaresApi.Models.UserProfile", null)
-                        .WithMany("EducationHistory")
-                        .HasForeignKey("UserProfileId");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Hobby", b =>
-                {
-                    b.HasOne("AxelLinaresApi.Models.UserProfile", null)
-                        .WithMany("Hobbies")
-                        .HasForeignKey("UserProfileId");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Link", b =>
-                {
-                    b.HasOne("AxelLinaresApi.Models.UserProfile", null)
-                        .WithMany("Links")
-                        .HasForeignKey("UserProfileId");
+                        .WithMany("Experiences")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AxelLinaresApi.Models.Project", b =>
                 {
                     b.HasOne("AxelLinaresApi.Models.UserProfile", null)
                         .WithMany("Projects")
-                        .HasForeignKey("UserProfileId");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.Skill", b =>
-                {
-                    b.HasOne("AxelLinaresApi.Models.UserProfile", null)
-                        .WithMany("Skills")
-                        .HasForeignKey("UserProfileId");
-                });
-
-            modelBuilder.Entity("AxelLinaresApi.Models.WorkExperience", b =>
-                {
-                    b.HasOne("AxelLinaresApi.Models.UserProfile", null)
-                        .WithMany("Experiences")
-                        .HasForeignKey("UserProfileId");
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AxelLinaresApi.Models.UserProfile", b =>
                 {
                     b.Navigation("Certifications");
 
-                    b.Navigation("EducationHistory");
-
                     b.Navigation("Experiences");
 
-                    b.Navigation("Hobbies");
-
-                    b.Navigation("Links");
-
                     b.Navigation("Projects");
-
-                    b.Navigation("Skills");
                 });
 #pragma warning restore 612, 618
         }

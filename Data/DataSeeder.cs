@@ -1,93 +1,147 @@
-﻿using AxelLinaresApi.Models;
+﻿// Data/DataSeeder.cs
+using AxelLinaresApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AxelLinaresApi.Data
 {
-    public static class DataSeeder
+    public static class DataSeeder // <--- Usamos tu nombre de clase
     {
-        // Este es el método que llamaremos para sembrar la BD
-        public static void Seed(ProfileDbContext context)
+        public static void Initialize(ProfileDbContext context)
         {
-            // Paso 1: Revisar si la base de datos ya tiene datos.
-            // Si ya hay un perfil, no hacemos nada.
-            if (context.UserProfiles.Any())
+            try
             {
-                return; // La base de datos ya ha sido sembrada
+                context.Database.EnsureCreated();
+            }
+            catch (Exception)
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
             }
 
-            // Paso 2: Si no hay datos, creamos el objeto UserProfile completo
-            var userProfile = new UserProfile
+            if (context.UserProfiles.Any()) return;
+
+            var axelProfile = new UserProfile
             {
-                Name = "Axel A. Linares",
-                Title = "Backend Developer | C# | .NET | APIs | AWS",
-                Summary = "Soy un desarrollador backend con experiencia en C#, .NET Framework/Core y Angular. Me enfoco en construir soluciones robustas y eficientes utilizando arquitectura limpia, APIs RESTful y metodologías ágiles. Disfruto resolviendo problemas complejos con lógica clara y trabajo en equipo colaborativo.",
-                Links = new List<Link>
+                Name = "AXEL A. LINARES",
+                Title = "Software Engineer | .NET Backend & QA Automation",
+                Summary = "Software Engineer with 2.5+ years of experience in Backend development (.NET) and QA Automation. Expert in building secure applications and automating E2E workflows using Playwright and Robot Framework. Currently specializing in Cybersecurity and Cloud architectures.",
+                Email = "axel.a.linares@gmail.com",
+                Phone = "5542284164",
+                Location = "CDMX, Mexico",
+                LinkedInUrl = "https://www.linkedin.com/in/axel-alberto-linares-lorrabaquio-69a6b31b0",
+                GitHubUrl = "https://github.com/ElorichV",
+                
+                HardSkills = new List<string> { "C#", "SQL", "Java", "CFML (ColdFusion)", "Python", "JavaScript", "C++", ".NET Core/Framework", "ASP.NET", "Angular", "Playwright (E2E)", "Robot Framework", "Unit Testing", "AWS" },
+                SoftSkills = new List<string> { "Threat Management", "Network Defense", "SOC Analyst skills" },
+                
+                Experiences = new List<Experience>
                 {
-                    new Link { Name = "Email", Url = "mailto:axel.a.linares@gmail.com" },
-                    new Link { Name = "GitHub", Url = "https://github.com/ElorichV" },
-                },
-                Experiences = new List<WorkExperience>
-                {
-                    new WorkExperience
-                    {
-                        JobTitle = "Associate Software Engineer I",
-                        Company = "Solera",
-                        Dates = "Agosto 2022 - Febrero 2025",
-                        Responsibilities = new List<string>
-                        {
-                            "Desarrollo backend de aplicaciones de escritorio usando C# y .NET Framework.",
-                            "Implementación full stack de features web utilizando Adobe ColdFusion.",
-                            "Estandarización de procesos de despliegue, mejorando tiempos y reduciendo errores.",
-                            "Colaboración con equipos técnicos y de UX para la mejora de productos."
-                        }
-                    }
-                },
-                Projects = new List<Project>
-                {
-                     new Project
-                    {
-                        Name = "Software de Gestión para Panadería",
-                        Description = "Una aplicación de escritorio en .NET para gestionar inventario, ventas y reportes, demostrando arquitectura limpia y manejo de base de datos.",
-                        RepoUrl = "https://github.com/ElorichV/SoftwarePanaderia",
-                        Technologies = new List<string> { "C#", ".NET", "Entity Framework", "SQL Server" }
+                    new Experience 
+                    { 
+                        Id = 1, 
+                        JobTitle = "QA Automation Intern", 
+                        Company = "Sección Amarilla (Agencia Digital ADN)", 
+                        Dates = "March 2026 - Present", 
+                        // ¡Rellena esta lista!
+                        Responsibilities = new List<string> {
+                            "Desarrollo e implementación de estrategias de pruebas automatizadas E2E utilizando .NET 8 y Playwright para asegurar la calidad de plataformas digitales críticas.",
+                            "Colaboración directa en el ciclo de vida de desarrollo de software (SDLC) para la identificación temprana de defectos y optimización de flujos de usuario.",
+                            "Análisis técnico y mantenimiento preventivo del repositorio de demos Playwright_Demo.",
+                        } 
                     },
-                    new Project
-                    {
-                        Name = "CV Online Profesional (Este Sitio)",
-                        Description = "Portafolio dinámico construido con React y una API en ASP.NET Core, desplegado en AWS.",
-                        RepoUrl = "https://github.com/ElorichV/CV-Online-React-API",
-                        Technologies = new List<string> { "React", "TypeScript", "ASP.NET Core", "AWS" }
+                    new Experience 
+                    { 
+                        Id = 2, 
+                        JobTitle = "Technical & Academic Specialization", 
+                        Company = "UNITEC & Cisco", 
+                        Dates = "February 2025 - February 2026", 
+                        Responsibilities = new List<string> {
+                            "Especialización avanzada en seguridad de red y administración de amenazas bajo los estándares de la Cisco Networking Academy.",
+                            "Análisis profundo y respuesta ante incidentes como SOC Analyst, utilizando herramientas de Network Defense.",
+                        } 
+                    },
+                    new Experience 
+                    { 
+                        Id = 3, 
+                        JobTitle = "Associate Software Engineer I", 
+                        Company = "Solera", 
+                        Dates = "August 2022 - February 2025", 
+                        Responsibilities = new List<string> {
+                            "Desarrollo de módulos de software y mantenimiento correctivo para plataformas empresariales de Solera.",
+                            "Implementación de pruebas unitarias y participación en revisiones de código cruzadas.",
+                            "Integración de componentes eficientes en bases de datos relacionales y optimización de consultas SQL."
+                        } 
                     }
                 },
-                Skills = new List<Skill>
-                {
-                    new Skill { Name = "C# / .NET", Level = "Avanzado", Category="Lenguajes y Frameworks" },
-                    new Skill { Name = "SQL / LINQ", Level = "Avanzado", Category="Bases de Datos" },
-                    new Skill { Name = "RESTful APIs", Level = "Avanzado", Category="Backend" },
-                    new Skill { Name = "AWS", Level = "Intermedio", Category="Cloud" },
-                    new Skill { Name = "Angular", Level = "Intermedio", Category="Frontend" },
-                    new Skill { Name = "Python", Level = "Intermedio", Category="Lenguajes y Frameworks" },
-                    new Skill { Name = "Git & Version Control", Level = "Avanzado", Category="Herramientas" }
-                },
-                EducationHistory = new List<Education>
-                {
-                    new Education { Degree = "Ing. en Sistemas de Software", Institution = "Unitec", Dates = "2023 - Actual" }
-                },
+                
                 Certifications = new List<Certification>
                 {
-                    new Certification { Name = "AWS Certified Cloud Practitioner (CLF-C02)", Status = "En Progreso" },
-                    new Certification { Name = "AWS Certified Solutions Architect - Associate", Status = "En Progreso" }
+                    // A las que no tienen link les ponemos "N/A" para satisfacer la regla NOT NULL de la base de datos
+                    new Certification { 
+                        Name = "PCAP & PCEP", 
+                        IssuingOrganization = "Python Institute", 
+                        CredentialUrl = "N/A" 
+                    },
+                    new Certification { 
+                        Name = "Cybersecurity Defense Analyst", 
+                        IssuingOrganization = "Cisco", 
+                        CredentialUrl = "https://www.credly.com/users/axel-alberto-linares-lorrabaquio/badges" 
+                    },
+                    new Certification { 
+                        Name = "Cyber Threat & Network Defense", 
+                        IssuingOrganization = "Cisco", 
+                        CredentialUrl = "https://www.credly.com/users/axel-alberto-linares-lorrabaquio/badges" 
+                    },
+                    new Certification { 
+                        Name = "CPP", 
+                        IssuingOrganization = "C++ Institute", 
+                        CredentialUrl = "N/A" 
+                    },
+                    new Certification { 
+                        Name = "Cloud Practitioner (CLF-C02)", 
+                        IssuingOrganization = "AWS", 
+                        CredentialUrl = "N/A" 
+                    }
                 },
-                Hobbies = new List<Hobby>
+
+                Projects = new List<Project>
                 {
-                    new Hobby { Name = "Dungeons & Dragons y Juegos de Mesa", Description = "Disfruto de los retos que implican estrategia, colaboración y resolución creativa de problemas en equipo." },
-                    new Hobby { Name = "Lectura de Ficción y Novelas Ligeras", Description = "Mi puerta a nuevas ideas y perspectivas, manteniendo mi mente curiosa y en constante aprendizaje." },
+                    new Project 
+                    { 
+                        Title = "Playwright E2E Automation Demo", 
+                        Description = "Repositorio enfocado en la automatización integral de pruebas de principio a fin (E2E) y de caja negra, implementando buenas prácticas con C# .NET y Playwright.",
+                        ProjectUrl = "https://github.com/ElorichV/Playwrigth_Demo"
+                    },
+                    new Project 
+                    { 
+                        Title = "Sistema de Gestión para Panaderías", 
+                        Description = "Desarrollo de un sistema de escritorio/web para la administración de inventario, insumos y ventas enfocado en panaderías. (Proyecto en pausa temporal debido al cumplimiento del servicio social).",
+                        ProjectUrl = "https://github.com/ElorichV/Sistema-de-gestion-para-panaderias"
+                    },
+                    new Project 
+                    { 
+                        Title = "CV Online - Frontend (React)", 
+                        Description = "El frontend responsivo y de alto impacto interactivo de mi portafolio web profesional, desarrollado utilizando React, Vite y preparado para animaciones avanzadas.",
+                        ProjectUrl = "https://github.com/ElorichV/cv-react-frontend"
+                    },
+                    new Project 
+                    { 
+                        Title = "CV Online - Backend API (.NET 8)", 
+                        Description = "El backend y API REST de mi CV dinámico, construido con .NET 8, ASP.NET Core Web API y Entity Framework Core, configurado con políticas de CORS y seeder resiliente.",
+                        ProjectUrl = "https://github.com/ElorichV/AxelLinaresApi"
+                    },
+                    new Project 
+                    { 
+                        Title = "Códigos de Aprendizaje y Competencia Algorítmica", 
+                        Description = "Colección estructurada de soluciones a retos lógicos y algorítmicos complejos de plataformas como Codeforces. Próximamente actualizado para incluir desafíos en múltiples lenguajes usando HackerRank.",
+                        ProjectUrl = "https://github.com/ElorichV/Codigos-de-aprendizaje-y-competencia"
+                    }
                 }
             };
 
-            // Paso 3: Agregar el perfil al contexto de la base de datos
-            context.UserProfiles.Add(userProfile);
-
-            // Paso 4: Guardar los cambios en la base de datos
+            context.UserProfiles.Add(axelProfile);
             context.SaveChanges();
         }
     }

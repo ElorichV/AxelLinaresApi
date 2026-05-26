@@ -1,76 +1,87 @@
-// --- USINGS ---
-// Estos 'usings' son necesarios para el DbContext, el Seeder y EF Core.
-using AxelLinaresApi.Data;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging; // Necesario para el Logger en el seeder
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using AxelLinaresApi.Data;
+using System;
 
-// --- BUILDER SETUP ---
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. A�adir el DbContext para la base de datos SQLite
-// Lee la cadena de conexi�n desde appsettings.json
-builder.Services.AddDbContext<ProfileDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+// =========================================================================
+// 1. REGISTRO DE SERVICIOS (CONTENEDOR DE INYECCIÓN DE DEPENDENCIAS)
+// =========================================================================
 
-// Add services to the container.
+// Configuración de los Controladores de la API
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Configuración de Swagger/OpenAPI para documentar y probar endpoints
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// --- APP BUILD ---
+// Registro de ProfileDbContext usando SQLite. 
+// Intenta leer "DefaultConnection" desde appsettings.json; si no existe, usa el fallback local.
+builder.Services.AddDbContext<ProfileDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=profile.db"));
+
+// Configuración de CORS (Cross-Origin Resource Sharing)
+// Vital para que Angular/React (Frontend) puedan consultar la API sin ser bloqueados por el navegador
+builder.Services.AddCors(options =>
+    {
+    options.AddPolicy("AllowPortfolioFrontend", policy =>
+        {
+        policy.AllowAnyOrigin()     // Permite peticiones desde cualquier origen (AWS CloudFront, Azure Static Apps, etc.)
+              .AllowAnyMethod()     // Permite cualquier método HTTP (GET, POST, PUT, DELETE)
+              .AllowAnyHeader();    // Permite cualquier cabecera HTTP
+    });
+});
+
 var app = builder.Build();
 
-// 2. Ejecutar el "Seeder" (sembrado) de la base de datos al iniciar
-// Este bloque se ejecuta una vez al arrancar la API
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        // Pide una instancia de nuestra base de datos
-        var context = services.GetRequiredService<ProfileDbContext>();
+// =========================================================================
+// 2. CONFIGURACIÓN DEL PIPELINE DE PETICIONES HTTP (MIDDLEWARES)
+// =========================================================================
 
-        // Aplica migraciones pendientes automáticamente
-        context.Database.Migrate(); 
-
-        // Llama a nuestro m�todo est�tico para sembrar los datos
-        DataSeeder.Seed(context);
-    }
-    catch (Exception ex)
-    {
-        // Captura cualquier error durante el sembrado y lo muestra en la consola
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Un error ocurri� durante el sembrado de la base de datos.");
-    }
-}
-
-// Configure the HTTP request pipeline.
-// Habilita Swagger solo en el entorno de desarrollo
+// Habilitar Swagger solo en ambiente de desarrollo para pruebas locales
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Redirige peticiones HTTP a HTTPS
+// Forzar la redirección segura a HTTPS
 app.UseHttpsRedirection();
 
-// 3. A�adir la pol�tica de CORS
-// �Importante! Debe ir ANTES de UseAuthorization
-// Esto permite que nuestra app de React (en localhost:5173) haga peticiones a esta API.
-app.UseCors(builder => builder
-   .AllowAnyOrigin()   // Permite cualquier origen (por simplicidad)
-   .AllowAnyMethod()   // Permite cualquier m�todo (GET, POST, etc.)
-   .AllowAnyHeader());  // Permite cualquier encabezado
+// Aplicar la política de CORS ANTES de la autorización y mapeo de rutas
+app.UseCors("AllowPortfolioFrontend");
 
 app.UseAuthorization();
 
-// Health check endpoint para Elastic Beanstalk
-app.MapGet("/", () => "OK");
-
+// Mapear los endpoints automáticos de tus controladores (ej: /api/profile)
 app.MapControllers();
 
-// Configurar puerto para Elastic Beanstalk
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-app.Run($"http://0.0.0.0:{port}");
+// =========================================================================
+// 3. EJECUCIÓN AUTOMÁTICA DEL SEEDER DE BASE DE DATOS
+// =========================================================================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        // Solicitamos el contexto de base de datos dentro del scope seguro de memoria
+        var context = services.GetRequiredService<ProfileDbContext>();
+        
+        // Invocamos tu inicializador profesional para verificar o poblar el CV ATS
+        DataSeeder.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        // En caso de fallo crítico de infraestructura en la nube, capturamos el log en la consola de AWS/Azure
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocurrió un error crítico al inicializar la base de datos y sembrar los datos del CV.");
+    }
+}
+
+// Arrancar la aplicación y escuchar peticiones
+app.Run();
