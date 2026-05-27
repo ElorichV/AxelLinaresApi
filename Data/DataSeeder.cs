@@ -1,4 +1,5 @@
 ﻿// Data/DataSeeder.cs
+// Data/DataSeeder.cs
 using AxelLinaresApi.Models;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 
 namespace AxelLinaresApi.Data
 {
-    public static class DataSeeder // <--- Usamos tu nombre de clase
+    public static class DataSeeder 
     {
         public static void Initialize(ProfileDbContext context)
         {
@@ -25,41 +26,63 @@ namespace AxelLinaresApi.Data
             var axelProfile = new UserProfile
             {
                 Name = "AXEL A. LINARES",
-                Title = "Software Engineer | .NET Backend & QA Automation",
-                Summary = "Software Engineer with 2.5+ years of experience in Backend development (.NET) and QA Automation. Expert in building secure applications and automating E2E workflows using Playwright and Robot Framework. Currently specializing in Cybersecurity and Cloud architectures.",
+                Title = "Ingeniero de Software Mid-Level | .NET Backend & QA Automation",
+                Summary = "Ingeniero de Software con más de 2.5 años de experiencia en desarrollo Backend (.NET) y automatización de calidad (QA). Mi enfoque combina la disciplina del análisis táctico con la potencia del stack .NET para construir arquitecturas estables e integras. Experto en flujos de trabajo E2E con Playwright y Robot Framework, especializándome actualmente en seguridad de redes y ecosistemas Cloud.",
                 Email = "axel.a.linares@gmail.com",
                 Phone = "5542284164",
-                Location = "CDMX, Mexico",
+                Location = "CDMX, México",
                 LinkedInUrl = "https://www.linkedin.com/in/axel-alberto-linares-lorrabaquio-69a6b31b0",
                 GitHubUrl = "https://github.com/ElorichV",
                 
-                HardSkills = new List<string> { "C#", "SQL", "Java", "CFML (ColdFusion)", "Python", "JavaScript", "C++", ".NET Core/Framework", "ASP.NET", "Angular", "Playwright (E2E)", "Robot Framework", "Unit Testing", "AWS" },
-                SoftSkills = new List<string> { "Threat Management", "Network Defense", "SOC Analyst skills" },
+                // Habilidades separadas lógicamente para mantener el formato de "etiquetas" en el Frontend
+                HardSkills = new List<string> 
+                { 
+                    // Lenguajes de Programación
+                    "C#", "Python", "Java", "C++", "JavaScript", "CFML (ColdFusion)", "C",
+                    // Bases de Datos
+                    "SQL", "SQL Server", "MongoDB",
+                    // Frameworks y Tecnologías Core
+                    ".NET 8 / Core", "ASP.NET", "Angular","React",
+                    // Herramientas de QA y Automatización
+                    "Playwright (E2E)", "Robot Framework", "Unit Testing", 
+                    // Nube e Infraestructura
+                    "AWS", "Azure"
+                },
+                
+                // Competencias profesionales (Soft Skills) enfocadas a un rol Mid-Level
+                SoftSkills = new List<string> 
+                { 
+                    "Aprendizaje Autónomo (Autodidacta)", 
+                    "Resolución de Problemas Complejos",
+                    "Comunicación Técnica Efectiva",
+                    "Adaptabilidad Tecnológica",
+                    "Pensamiento Crítico y Analítico",
+                    "Resiliencia bajo Presión"
+                },
                 
                 Experiences = new List<Experience>
                 {
                     new Experience 
                     { 
                         Id = 1, 
-                        JobTitle = "QA Automation Intern", 
+                        JobTitle = "QA Automation Intern",
                         Company = "Sección Amarilla (Agencia Digital ADN)", 
-                        Dates = "March 2026 - Present", 
-                        // ¡Rellena esta lista!
+                        Dates = "Marzo 2026 - Presente",
                         Responsibilities = new List<string> {
                             "Desarrollo e implementación de estrategias de pruebas automatizadas E2E utilizando .NET 8 y Playwright para asegurar la calidad de plataformas digitales críticas.",
                             "Colaboración directa en el ciclo de vida de desarrollo de software (SDLC) para la identificación temprana de defectos y optimización de flujos de usuario.",
-                            "Análisis técnico y mantenimiento preventivo del repositorio de demos Playwright_Demo.",
+                            "Análisis técnico y mantenimiento preventivo del repositorio de demos Playwright_Demo."
                         } 
                     },
                     new Experience 
                     { 
                         Id = 2, 
-                        JobTitle = "Technical & Academic Specialization", 
+                        JobTitle = "Especialización Técnica y Académica", 
                         Company = "UNITEC & Cisco", 
-                        Dates = "February 2025 - February 2026", 
+                        Dates = "Febrero 2025 - Febrero 2026", 
                         Responsibilities = new List<string> {
                             "Especialización avanzada en seguridad de red y administración de amenazas bajo los estándares de la Cisco Networking Academy.",
-                            "Análisis profundo y respuesta ante incidentes como SOC Analyst, utilizando herramientas de Network Defense.",
+                            "Análisis profundo y respuesta ante incidentes como SOC Analyst, utilizando herramientas de Network Defense."
                         } 
                     },
                     new Experience 
@@ -67,7 +90,7 @@ namespace AxelLinaresApi.Data
                         Id = 3, 
                         JobTitle = "Associate Software Engineer I", 
                         Company = "Solera", 
-                        Dates = "August 2022 - February 2025", 
+                        Dates = "Agosto 2022 - Febrero 2025", 
                         Responsibilities = new List<string> {
                             "Desarrollo de módulos de software y mantenimiento correctivo para plataformas empresariales de Solera.",
                             "Implementación de pruebas unitarias y participación en revisiones de código cruzadas.",
@@ -78,7 +101,6 @@ namespace AxelLinaresApi.Data
                 
                 Certifications = new List<Certification>
                 {
-                    // A las que no tienen link les ponemos "N/A" para satisfacer la regla NOT NULL de la base de datos
                     new Certification { 
                         Name = "PCAP & PCEP", 
                         IssuingOrganization = "Python Institute", 
