@@ -5,7 +5,7 @@
 namespace AxelLinaresApi.Migrations
 {
     /// <inheritdoc />
-    public partial class AgregaResponsabilidades : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,8 @@ namespace AxelLinaresApi.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Summary = table.Column<string>(type: "TEXT", nullable: false),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    Phone = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: true),
+                    Phone = table.Column<string>(type: "TEXT", nullable: true),
                     Location = table.Column<string>(type: "TEXT", nullable: false),
                     LinkedInUrl = table.Column<string>(type: "TEXT", nullable: true),
                     GitHubUrl = table.Column<string>(type: "TEXT", nullable: true),

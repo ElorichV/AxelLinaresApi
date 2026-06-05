@@ -108,7 +108,6 @@ namespace AxelLinaresApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("GitHubUrl")
@@ -130,7 +129,6 @@ namespace AxelLinaresApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SoftSkills")

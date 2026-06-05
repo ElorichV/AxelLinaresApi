@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AxelLinaresApi.Migrations
 {
     [DbContext(typeof(ProfileDbContext))]
-    [Migration("20260522203112_AgregaResponsabilidades")]
-    partial class AgregaResponsabilidades
+    [Migration("20260603204534_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,7 +111,6 @@ namespace AxelLinaresApi.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("GitHubUrl")
@@ -133,7 +132,6 @@ namespace AxelLinaresApi.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SoftSkills")
