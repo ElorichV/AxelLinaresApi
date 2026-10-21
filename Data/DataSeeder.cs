@@ -1,4 +1,4 @@
-﻿using AxelLinaresApi.Models;
+using AxelLinaresApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +9,29 @@ namespace AxelLinaresApi.Data
     {
         public static void Initialize(ProfileDbContext context)
         {
+            // Verificación y preparación resiliente del esquema SQLite
             try
             {
                 context.Database.EnsureCreated();
+                // Verificación de integridad de esquema: comprobar que las columnas coincidan con el modelo
+                _ = context.Experiences.Select(e => e.CompanyUrl).FirstOrDefault();
             }
             catch (Exception)
             {
+                // Si la estructura cambió (e.g., nuevo campo CompanyUrl), recreamos la base de datos de manera limpia
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
             }
 
-            if (context.UserProfiles.Any()) return;
+            // Si ya existen registros, limpiamos para sincronizar los datos actualizados del seeder
+            if (context.UserProfiles.Any())
+            {
+                context.Projects.RemoveRange(context.Projects);
+                context.Certifications.RemoveRange(context.Certifications);
+                context.Experiences.RemoveRange(context.Experiences);
+                context.UserProfiles.RemoveRange(context.UserProfiles);
+                context.SaveChanges();
+            }
 
             var axelProfile = new UserProfile
             {
@@ -29,14 +41,15 @@ namespace AxelLinaresApi.Data
                 Email = "axel.a.linares@gmail.com",
                 Location = "CDMX, México",
                 LinkedInUrl = "https://www.linkedin.com/in/axel-alberto-linares-lorrabaquio-69a6b31b0",
+                GitHubUrl = "https://github.com/ElorichV",
                 
                 HardSkills = new List<string> 
                 { 
                     "C#", "Python", "Java", "C++", "JavaScript", "CFML (ColdFusion)", "C",
-                    "SQL", "SQL Server", "MongoDB",
-                    ".NET 8 / Core", "ASP.NET", "Angular","React",
-                    "Playwright (E2E)", "Robot Framework", "Unit Testing", 
-                    "AWS", "Azure"
+                    "SQL", "SQL Server", "MongoDB", "SQLite",
+                    ".NET 8 / Core", "ASP.NET Core", "Clean Architecture", "Angular", "React",
+                    "Playwright (E2E)", "Robot Framework", "NUnit", "Unit Testing", 
+                    "AWS", "Azure", "Docker"
                 },
                 
                 SoftSkills = new List<string> 
@@ -54,8 +67,23 @@ namespace AxelLinaresApi.Data
                     new Experience 
                     { 
                         Id = 1, 
+                        JobTitle = "Full-Stack Software Engineer",
+                        Company = "Positronica Labs", 
+                        CompanyUrl = "https://positronicalabs.dev/team",
+                        Dates = "Enero 2026 - Presente",
+                        Responsibilities = new List<string> {
+                            "Desarrollo e ingeniería de arquitecturas backend en .NET 8 y microservicios escalables para sistemas agénticos e inteligencia artificial aplicada (sitio oficial: https://positronicalabs.dev/team).",
+                            "Liderazgo de la estrategia de aseguramiento de calidad técnica (QA): diseño e implementación de frameworks de pruebas E2E automatizadas con Playwright Sharp y C#.",
+                            "Implementación de pipelines de CI/CD con quality gates estrictos para validación de releases, asegurando estabilidad y cero regresiones antes de despliegues productivos.",
+                            "Investigación e integración de infraestructura resiliente, sistemas locales cerrados (local-first) y APIs RESTful seguras mitigando riesgos OWASP Top 10."
+                        } 
+                    },
+                    new Experience 
+                    { 
+                        Id = 2, 
                         JobTitle = "QA Automation Intern",
                         Company = "Sección Amarilla (Agencia Digital ADN)", 
+                        CompanyUrl = "https://www.seccionamarilla.com.mx/",
                         Dates = "Marzo 2026 - Presente",
                         Responsibilities = new List<string> {
                             "Desarrollé e implementé estrategias de pruebas automatizadas E2E utilizando .NET 8 y Playwright, asegurando la calidad de plataformas digitales críticas.",
@@ -66,9 +94,10 @@ namespace AxelLinaresApi.Data
                     },
                     new Experience 
                     { 
-                        Id = 2, 
+                        Id = 3, 
                         JobTitle = "Especialización Técnica y Académica", 
                         Company = "UNITEC & Cisco", 
+                        CompanyUrl = "https://www.credly.com/users/axel-alberto-linares-lorrabaquio/badges",
                         Dates = "Febrero 2025 - Febrero 2026", 
                         Responsibilities = new List<string> {
                             "Especialización avanzada en seguridad de red y administración de amenazas bajo los estándares de la Cisco Networking Academy.",
@@ -77,9 +106,10 @@ namespace AxelLinaresApi.Data
                     },
                     new Experience 
                     { 
-                        Id = 3, 
+                        Id = 4, 
                         JobTitle = "Associate Software Engineer I", 
                         Company = "Solera", 
+                        CompanyUrl = "https://www.solera.com",
                         Dates = "Agosto 2022 - Febrero 2025", 
                         Responsibilities = new List<string> {
                             "Desarrollé módulos de backend en C#/.NET para plataformas empresariales, incluyendo APIs REST para gestión de datos.",
@@ -93,26 +123,31 @@ namespace AxelLinaresApi.Data
                 Certifications = new List<Certification>
                 {
                     new Certification { 
+                        Id = 1,
                         Name = "PCAP & PCEP", 
                         IssuingOrganization = "Python Institute", 
                         CredentialUrl = "N/A" 
                     },
                     new Certification { 
+                        Id = 2,
                         Name = "Cybersecurity Defense Analyst", 
                         IssuingOrganization = "Cisco", 
                         CredentialUrl = "https://www.credly.com/users/axel-alberto-linares-lorrabaquio/badges" 
                     },
                     new Certification { 
+                        Id = 3,
                         Name = "Cyber Threat & Network Defense", 
                         IssuingOrganization = "Cisco", 
                         CredentialUrl = "https://www.credly.com/users/axel-alberto-linares-lorrabaquio/badges" 
                     },
                     new Certification { 
+                        Id = 4,
                         Name = "CPP", 
                         IssuingOrganization = "C++ Institute", 
                         CredentialUrl = "N/A" 
                     },
                     new Certification { 
+                        Id = 5,
                         Name = "Cloud Practitioner (CLF-C02)", 
                         IssuingOrganization = "AWS", 
                         CredentialUrl = "N/A" 
@@ -123,32 +158,37 @@ namespace AxelLinaresApi.Data
                 {
                     new Project 
                     { 
-                        Title = "QA Automation Suite (Playwright)", 
-                        Description = "Framework de pruebas automatizadas E2E diseñado con Playwright y C# .NET. Impacto: Reduje la deuda técnica en un 20% mediante pruebas automatizadas y aumenté la cobertura de pruebas.",
-                        ProjectUrl = "https://github.com/ElorichV/Playwrigth_Demo"
-                    },
-                    new Project 
-                    { 
+                        Id = 1,
                         Title = "Sistema de Gestión para Panaderías", 
-                        Description = "Ecosistema Full-Stack desarrollado para gestión de inventarios y ventas. Desarrollé el backend en C#/.NET con bases de datos optimizadas. Impacto: Reduje el tiempo de procesamiento de pedidos en un 30%.",
+                        Description = "Ecosistema empresarial de misión crítica diseñado bajo Clean Architecture con .NET 8 y ASP.NET Core. Implementa transacciones de inventario con consistencia ACID en SQL Server, gestión de stock en tiempo real, índices optimizados y patrón Repositorio desacoplado para compras, ventas y control de inventario.",
                         ProjectUrl = "https://github.com/ElorichV/Sistema-de-gestion-para-panaderias"
                     },
                     new Project 
                     { 
-                        Title = "CV Online - Frontend (React)", 
-                        Description = "El frontend responsivo y de alto impacto interactivo de mi portafolio web profesional, desarrollado utilizando React, Vite y preparado para animaciones avanzadas.",
+                        Id = 2,
+                        Title = "QA Automation Suite - Sección Amarilla", 
+                        Description = "Suite empresarial de automatización de pruebas End-to-End (E2E) para plataformas de alto tráfico en Sección Amarilla. Desarrollada con Playwright Sharp, .NET 8 y NUnit; implementa Page Object Model (POM), ejecución paralela y suites de regresión continua que reducen la detección de defectos en un 30%.",
+                        ProjectUrl = "https://github.com/ElorichV/Playwrigth_Demo"
+                    },
+                    new Project 
+                    { 
+                        Id = 3,
+                        Title = "TaskMaster-API", 
+                        Description = "Showcase empresarial de CFML Moderno desarrollado sobre Lucee REST API. Diseñado bajo principios de Clean Architecture y directivas AppSec (mitigación OWASP Top 10, validación estricta de inputs, parametrización segura de datos contra SQL Injection y respuestas estandarizadas RFC 7807).",
+                        ProjectUrl = "https://github.com/ElorichV/TaskMaster-API-Modern-CFML-Showcase-"
+                    },
+                    new Project 
+                    { 
+                        Id = 4,
+                        Title = "CV Online Fullstack", 
+                        Description = "Plataforma web profesional desacoplada con backend en .NET 8 Web API (Clean Architecture, Entity Framework Core, SQLite, Rate Limiting nativo contra spam, validación estricta de inputs y respuestas estándar RFC 7807 ProblemDetails) y cliente frontend SPA interactivo en React con Vite.",
                         ProjectUrl = "https://github.com/ElorichV/cv-react-frontend"
                     },
                     new Project 
                     { 
-                        Title = "CV Online - Backend API (.NET 8)", 
-                        Description = "El backend y API REST de mi CV dinámico, construido con .NET 8, ASP.NET Core Web API y Entity Framework Core, configurado con políticas de CORS y seeder resiliente.",
-                        ProjectUrl = "https://github.com/ElorichV/AxelLinaresApi"
-                    },
-                    new Project 
-                    { 
+                        Id = 5,
                         Title = "Códigos de Aprendizaje y Competencia Algorítmica", 
-                        Description = "Colección estructurada de soluciones a retos lógicos y algorítmicos complejos de plataformas como Codeforces. Próximamente actualizado para incluir desafíos en HackerRank.",
+                        Description = "Colección estructurada de soluciones a retos lógicos y algorítmicos complejos de plataformas como Codeforces y HackerRank, implementadas en C++, C# y Python aplicando optimización de complejidad temporal y espacial.",
                         ProjectUrl = "https://github.com/ElorichV/Codigos-de-aprendizaje-y-competencia"
                     }
                 }

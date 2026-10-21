@@ -1,60 +1,101 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Net;
 using System.Net.Mail;
-using AxeLinaresapi.Models;
+using AxelLinaresApi.Models;
 
-namespace AxeLinaresapi.Controllers
+namespace AxelLinaresApi.Controllers
 {
+    /// <summary>
+    /// Controlador responsable del envío de correos electrónicos desde el formulario de contacto.
+    /// Protegido con Rate Limiting nativo de .NET 8 y validación estricta (Data Annotations + IValidatableObject).
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("EmailRateLimitPolicy")]
     public class EmailController : ControllerBase
     {
         private readonly IConfiguration _config;
+        private readonly ILogger<EmailController> _logger;
 
-        public EmailController(IConfiguration config)
+        public EmailController(IConfiguration config, ILogger<EmailController> logger)
         {
             _config = config;
+            _logger = logger;
         }
 
         [HttpPost("send")]
-        public IActionResult SendEmail([FromBody] ContactRequest request)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable)]
+        public async Task<IActionResult> SendEmailAsync([FromBody] ContactRequest request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Message))
+            // 1. Validación estricta con Data Annotations e IValidatableObject (RFC 7807)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new { message = "El correo y el mensaje son obligatorios." });
+                return ValidationProblem(ModelState);
+            }
+
+            // 2. Mitigación AppSec: Prevención de SMTP Header Injection (CRLF) y sanitización
+            var sanitizedName = request.Name.Replace("\r", "").Replace("\n", "").Trim();
+            var sanitizedEmail = request.Email.Replace("\r", "").Replace("\n", "").Trim();
+
+            // 3. Lectura segura de credenciales desde IConfiguration (Secretos o Variables de Entorno)
+            var senderEmail = _config["EmailSettings:SenderEmail"];
+            var senderPassword = _config["EmailSettings:SenderPassword"];
+
+            if (string.IsNullOrWhiteSpace(senderEmail) || string.IsNullOrWhiteSpace(senderPassword))
+            {
+                _logger.LogWarning("Configuración de servidor SMTP incompleta o ausente.");
+                return Problem(
+                    statusCode: StatusCodes.Status503ServiceUnavailable,
+                    type: "https://tools.ietf.org/html/rfc7231#section-6.6.4",
+                    title: "Servicio de correo no disponible",
+                    detail: "El servicio de mensajería no se encuentra disponible temporalmente por configuración.");
             }
 
             try
             {
-                // Lectura segura de credenciales desde IConfiguration
-                var senderEmail = _config["EmailSettings:SenderEmail"];
-                var senderPassword = _config["EmailSettings:SenderPassword"];
-
-                var smtpClient = new SmtpClient("smtp.gmail.com")
+                using var smtpClient = new SmtpClient("smtp.gmail.com")
                 {
                     Port = 587,
                     Credentials = new NetworkCredential(senderEmail, senderPassword),
                     EnableSsl = true,
                 };
 
-                var mailMessage = new MailMessage
+                using var mailMessage = new MailMessage
                 {
-                    From = new MailAddress(senderEmail),
-                    Subject = $"Nuevo mensaje de portafolio de: {request.Name}",
-                    Body = $"Has recibido un nuevo mensaje de contacto desde tu Portfolio.\n\nNombre: {request.Name}\nCorreo: {request.Email}\nMensaje:\n{request.Message}",
+                    From = new MailAddress(senderEmail, "Portfolio Contact Notification"),
+                    Subject = $"Nuevo mensaje de portafolio de: {sanitizedName}",
+                    Body = $"Has recibido un nuevo mensaje de contacto desde tu Portfolio.\n\n" +
+                           $"Nombre: {sanitizedName}\n" +
+                           $"Correo: {sanitizedEmail}\n" +
+                           $"Mensaje:\n{request.Message}",
                     IsBodyHtml = false,
                 };
 
-                // Te envía el correo a tu propia bandeja
                 mailMessage.To.Add(senderEmail);
+                mailMessage.ReplyToList.Add(new MailAddress(sanitizedEmail, sanitizedName));
 
-                smtpClient.Send(mailMessage);
+                // E/S asíncrona no bloqueante
+                await smtpClient.SendMailAsync(mailMessage, cancellationToken);
+
+                _logger.LogInformation("Mensaje de contacto enviado exitosamente de {Email}", sanitizedEmail);
 
                 return Ok(new { message = "Correo enviado exitosamente." });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error interno al enviar el correo.", error = ex.Message });
+                _logger.LogError(ex, "Error al enviar el correo de contacto desde {Email}", sanitizedEmail);
+
+                // Cumplimiento estricto RFC 7807: No exponer detalles internos de infraestructura
+                return Problem(
+                    statusCode: StatusCodes.Status500InternalServerError,
+                    type: "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                    title: "Error interno al enviar el correo",
+                    detail: "Ocurrió un problema de comunicación al intentar enviar tu mensaje. Por favor, intenta de nuevo más tarde.");
             }
         }
     }
