@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking; // <--- LIBRERÍA NUEVA
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using AxelLinaresApi.Models;
 using System;
 using System.Collections.Generic;
@@ -20,40 +20,45 @@ namespace AxelLinaresApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Regla matemática para comparar listas (¡Ahora segura contra valores nulos!)
             var stringListComparer = new ValueComparer<List<string>>(
                 (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
                 c => c != null ? c.Aggregate(0, (a, v) => HashCode.Combine(a, v != null ? v.GetHashCode() : 0)) : 0,
                 c => c != null ? c.ToList() : new List<string>());
 
-            // 2. Se lo aplicamos a HardSkills
             modelBuilder.Entity<UserProfile>()
                 .Property(e => e.HardSkills)
                 .HasConversion(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
-                .Metadata.SetValueComparer(stringListComparer); // <--- CORRECCIÓN AQUÍ
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(stringListComparer);
 
-            // 3. Se lo aplicamos a SoftSkills
             modelBuilder.Entity<UserProfile>()
                 .Property(e => e.SoftSkills)
                 .HasConversion(
-                    v => string.Join(',', v),
-                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
-                .Metadata.SetValueComparer(stringListComparer); // <--- CORRECCIÓN AQUÍ
-            
-            // Configuración matemática para que SQLite entienda la lista de responsabilidades
-            var responsibilitiesComparer = new ValueComparer<List<string>>(
-                (c1, c2) => c1 != null && c2 != null && c1.SequenceEqual(c2),
-                c => c != null ? c.Aggregate(0, (a, v) => HashCode.Combine(a, v != null ? v.GetHashCode() : 0)) : 0,
-                c => c != null ? c.ToList() : new List<string>());
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(stringListComparer);
 
             modelBuilder.Entity<Experience>()
                 .Property(e => e.Responsibilities)
                 .HasConversion(
-                    v => string.Join('|', v), // Las unimos con un pipe '|' en la BD
-                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList()) // Las separamos al leerlas
-                .Metadata.SetValueComparer(responsibilitiesComparer);
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(stringListComparer);
+
+            modelBuilder.Entity<Project>()
+                .Property(p => p.TechStack)
+                .HasConversion(
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(stringListComparer);
+
+            modelBuilder.Entity<Project>()
+                .Property(p => p.ArchitectureNotes)
+                .HasConversion(
+                    v => string.Join('|', v),
+                    v => v.Split('|', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(stringListComparer);
         }
     }
 }
