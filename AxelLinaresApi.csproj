@@ -24,6 +24,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="AxelLinaresApi.Tests\**" />
+    <Content Remove="AxelLinaresApi.Tests\**" />
+    <EmbeddedResource Remove="AxelLinaresApi.Tests\**" />
+    <None Remove="AxelLinaresApi.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_ContentIncludedByDefault Remove="publish-linux\appsettings.Development.json" />
     <_ContentIncludedByDefault Remove="publish-linux\appsettings.json" />
     <_ContentIncludedByDefault Remove="publish-linux\appsettings.Production.json" />

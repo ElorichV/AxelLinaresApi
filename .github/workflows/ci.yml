@@ -1,0 +1,34 @@
+name: Backend Quality Gate (.NET 8 + xUnit)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      EmailSettings__SenderEmail: "ci-dummy@example.com"
+      EmailSettings__SenderPassword: "ci-dummy-password"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore AxelLinaresApi.Tests/AxelLinaresApi.Tests.csproj
+
+      - name: Build production artifact & test suite
+        run: dotnet build AxelLinaresApi.Tests/AxelLinaresApi.Tests.csproj --configuration Release --no-restore
+
+      - name: Run xUnit Unit & Contract Tests
+        run: dotnet test AxelLinaresApi.Tests/AxelLinaresApi.Tests.csproj --configuration Release --no-build --verbosity normal
