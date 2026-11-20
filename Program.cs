@@ -49,8 +49,9 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
-// Registro de Controladores
+// Registro de Controladores y HttpClient
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
 
 // Configuración de Rate Limiting nativo de .NET 8 (FixedWindow) para mitigar spam y abusos
 builder.Services.AddRateLimiter(options =>

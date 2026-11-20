@@ -12,6 +12,7 @@ namespace AxelLinaresApi.Models
         public string? Badge { get; set; }
         public List<string> TechStack { get; set; } = new List<string>();
         public List<string> ArchitectureNotes { get; set; } = new List<string>();
+        public string? ArchitectureDiagramUrl { get; set; }
         public int UserProfileId { get; set; }
     }
 }

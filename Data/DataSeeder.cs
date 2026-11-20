@@ -16,6 +16,7 @@ namespace AxelLinaresApi.Data
                 // Verificación de integridad de esquema: comprobar que las columnas nuevas existan
                 _ = context.Experiences.Select(e => e.CompanyUrl).FirstOrDefault();
                 _ = context.Projects.Select(p => p.Category).FirstOrDefault();
+                _ = context.Projects.Select(p => p.ArchitectureDiagramUrl).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -150,6 +151,7 @@ namespace AxelLinaresApi.Data
                         Title = "BenchEngine / GreenGemma (MLH Hackathon)", 
                         Description = "Galardonado con Mención Honorífica (4to lugar) en MLH. Plataforma de benchmarking energético local para modelos abiertos (Gemma 4) con extracción estructurada vía Firecrawl, autenticación OTP y síntesis de voz con ElevenLabs.",
                         ProjectUrl = "https://github.com/ElorichV/hacktoberfest2026",
+                        ArchitectureDiagramUrl = "/floorplans/benchengine.html",
                         Category = "Hackathons",
                         Badge = "🏆 4to Lugar MLH Hackathon",
                         TechStack = new List<string> { "Ollama (Gemma 4)", "Firecrawl", "ElevenLabs", "React", "MojoAuth OTP" },
@@ -165,6 +167,7 @@ namespace AxelLinaresApi.Data
                         Title = "Voz Abierta — Traductor Bidireccional LSM 3D", 
                         Description = "Prototipo desarrollado para el AI Hackathon por México × Clara. Traductor en tiempo real entre Lengua de Señas Mexicana (LSM) y español utilizando visión computacional con MediaPipe, avatar 3D en Three.js y Web Speech API.",
                         ProjectUrl = "https://github.com/ElorichV/Voz-abierta",
+                        ArchitectureDiagramUrl = "/floorplans/voz-abierta.html",
                         Category = "Hackathons",
                         Badge = "🚀 AI Hackathon × Clara",
                         TechStack = new List<string> { "MediaPipe", "Three.js", "Web Speech API", "React", "TypeScript" },
@@ -180,6 +183,7 @@ namespace AxelLinaresApi.Data
                         Title = "Voice2Task — Agente iOS Voz a GitHub Issues", 
                         Description = "Aplicación nativa iOS (SwiftUI + SwiftData) que transcribe notas de voz técnicas en tiempo real con SFSpeechRecognizer, extrae tareas estructuradas mediante OpenAI (gpt-4o-mini) y las sincroniza automáticamente con GitHub Issues.",
                         ProjectUrl = "https://github.com/ElorichV/Voice2Task",
+                        ArchitectureDiagramUrl = "/floorplans/voice2task.html",
                         Category = "Hackathons",
                         Badge = "📱 Native iOS + AI Agents",
                         TechStack = new List<string> { "SwiftUI", "SwiftData", "OpenAI API", "SFSpeechRecognizer", "GitHub REST API" },
@@ -197,6 +201,7 @@ namespace AxelLinaresApi.Data
                         Title = "Sistema ERP/POS de Gestión para Panaderías", 
                         Description = "Ecosistema empresarial Full-Stack diseñado bajo Clean Architecture con .NET 8 Web API, Entity Framework Core y SQL Server. Implementa control de inventario multi-ingrediente con transacciones ACID y cliente SPA en React 18.",
                         ProjectUrl = "https://github.com/ElorichV/Sistema-de-gestion-para-panaderias",
+                        ArchitectureDiagramUrl = "/floorplans/panaderia-erp.html",
                         Category = "Backend",
                         Badge = "🏛️ Clean Architecture & ACID",
                         TechStack = new List<string> { ".NET 8 Web API", "C#", "SQL Server", "EF Core", "Clean Architecture", "React 18" },
@@ -212,6 +217,7 @@ namespace AxelLinaresApi.Data
                         Title = "Portafolio Cloud Engine & API Core (.NET 8 + AWS)", 
                         Description = "Plataforma Full-Stack desacoplada desplegada sobre AWS (S3, CloudFront y Elastic Beanstalk). Backend en .NET 8 con Rate Limiting nativo por IP, sanitización AppSec contra inyección CRLF y respuestas estandarizadas RFC 7807.",
                         ProjectUrl = "https://github.com/ElorichV/AxelLinaresApi",
+                        ArchitectureDiagramUrl = "/floorplans/portafolio-cloud.html",
                         Category = "Backend",
                         Badge = "☁️ AWS S3 + CloudFront + .NET 8",
                         TechStack = new List<string> { ".NET 8", "ASP.NET Core", "AWS S3 & CloudFront", "SQLite", "RFC 7807", "React + Vite" },
@@ -227,6 +233,7 @@ namespace AxelLinaresApi.Data
                         Title = "TaskMaster API — Modern CFML Showcase", 
                         Description = "API RESTful de grado productivo construida 100% en cfscript moderno sobre Lucee y CommandBox. Implementa arquitectura por capas, autenticación stateless JWT (HMAC-SHA256), base de datos H2 embebida y contratos RFC 7807.",
                         ProjectUrl = "https://github.com/ElorichV/TaskMaster-API-Modern-CFML-Showcase",
+                        ArchitectureDiagramUrl = "/floorplans/taskmaster-cfml.html",
                         Category = "Backend",
                         Badge = "🛡️ AppSec & OWASP Top 10",
                         TechStack = new List<string> { "Modern CFML", "Lucee", "JWT HMAC-SHA256", "RFC 7807", "H2 Database", "CommandBox" },
@@ -244,6 +251,7 @@ namespace AxelLinaresApi.Data
                         Title = "QA AI-Assistant & Enterprise Playwright Suite", 
                         Description = "Framework de automatización E2E en C# / .NET 9, Playwright y NUnit integrado con un asistente analítico en Python / OpenAI API que captura excepciones de ejecución en tiempo real para diagnosticar causas raíz y sugerir parches.",
                         ProjectUrl = "https://github.com/ElorichV/Playwrigth_Demo",
+                        ArchitectureDiagramUrl = "/floorplans/qa-ai-playwright.html",
                         Category = "QA",
                         Badge = "🤖 Playwright + OpenAI API",
                         TechStack = new List<string> { "C#", ".NET 9", "Playwright", "Python", "OpenAI API", "NUnit", "Browserbase" },
@@ -259,6 +267,7 @@ namespace AxelLinaresApi.Data
                         Title = "Plataforma \"Mi Primera Chamba\" (Equipo QA Tester)", 
                         Description = "Integrante del equipo de aseguramiento de calidad (QA) ejecutando pruebas funcionales, validación de flujos críticos de usuario y reporte temprano de defectos (Shift-Left Testing) para garantizar la estabilidad previo a despliegues productivos.",
                         ProjectUrl = null, // Confidencial: sin enlace externo expuesto
+                        ArchitectureDiagramUrl = "/floorplans/mi-primera-chamba.html",
                         Category = "QA",
                         Badge = "🎯 Shift-Left QA Team",
                         TechStack = new List<string> { "Shift-Left Testing", "QA Funcional & E2E", "Validación de Flujos", "Reporte de Defectos", "Regresión" },
@@ -274,6 +283,7 @@ namespace AxelLinaresApi.Data
                         Title = "Algoritmia Avanzada y Programación Competitiva (OMI)", 
                         Description = "Repositorio de más de 50 soluciones de alto rendimiento en C++ para la Olimpiada Mexicana de Informática (OMI) y jueces en línea, implementando estructuras de datos avanzadas y optimización de complejidad.",
                         ProjectUrl = "https://github.com/ElorichV/Codigos-de-aprendizaje-y-competencia",
+                        ArchitectureDiagramUrl = "/floorplans/algoritmia-omi.html",
                         Category = "QA",
                         Badge = "⚡ C++ Advanced DSA",
                         TechStack = new List<string> { "C++", "Treaps", "Persistent Segment Trees", "Graph Theory", "Dynamic Programming" },

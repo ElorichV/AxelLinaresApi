@@ -218,5 +218,83 @@ namespace AxelLinaresApi.Tests
             var problem = Assert.IsType<ProblemDetails>(objectResult.Value);
             Assert.Equal("https://tools.ietf.org/html/rfc7231#section-6.6.4", problem.Type);
         }
+
+        [Fact]
+        public async Task SendEmailAsync_WhenN8nWebhookConfiguredAndSuccessful_Returns200OkWithoutSmtpCredentials()
+        {
+            // Arrange
+            var testConfig = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    { "N8nSettings:ContactWebhookUrl", "https://n8n.example.com/webhook/test-contact" }
+                })
+                .Build();
+
+            var handler = new TestHttpMessageHandler(System.Net.HttpStatusCode.OK);
+            var httpClient = new HttpClient(handler);
+            var mockFactory = new TestHttpClientFactory(httpClient);
+
+            var controller = new EmailController(testConfig, NullLogger<EmailController>.Instance, mockFactory);
+            var validRequest = new ContactRequest
+            {
+                Name = "Recruiter Recruiter",
+                Email = "recruiter@techcompany.com",
+                Message = "Hola Axel, revisamos tu portafolio y tu experiencia en .NET y QA nos parece excelente."
+            };
+
+            // Act
+            var result = await controller.SendEmailAsync(validRequest, CancellationToken.None);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(StatusCodes.Status200OK, okResult.StatusCode);
+            Assert.NotNull(handler.LastRequest);
+            Assert.Equal(HttpMethod.Post, handler.LastRequest!.Method);
+            Assert.Equal("https://n8n.example.com/webhook/test-contact", handler.LastRequest.RequestUri?.ToString());
+        }
+
+        [Fact]
+        public void Project_SupportsArchitectureDiagramUrlProperty()
+        {
+            // Arrange
+            var project = new Project
+            {
+                Id = 10,
+                Title = "Test Architecture Project",
+                ArchitectureDiagramUrl = "https://miro.com/app/live-embed/uXjVO123456=/?moveToWidget=345876451234"
+            };
+
+            // Assert
+            Assert.NotNull(project.ArchitectureDiagramUrl);
+            Assert.Contains("miro.com", project.ArchitectureDiagramUrl);
+        }
+    }
+
+    public class TestHttpMessageHandler : HttpMessageHandler
+    {
+        private readonly System.Net.HttpStatusCode _statusCode;
+        public HttpRequestMessage? LastRequest { get; private set; }
+
+        public TestHttpMessageHandler(System.Net.HttpStatusCode statusCode)
+        {
+            _statusCode = statusCode;
+        }
+
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            LastRequest = request;
+            var response = new HttpResponseMessage(_statusCode)
+            {
+                Content = new StringContent("{\"status\":\"ok\"}")
+            };
+            return Task.FromResult(response);
+        }
+    }
+
+    public class TestHttpClientFactory : IHttpClientFactory
+    {
+        private readonly HttpClient _client;
+        public TestHttpClientFactory(HttpClient client) => _client = client;
+        public HttpClient CreateClient(string name) => _client;
     }
 }
