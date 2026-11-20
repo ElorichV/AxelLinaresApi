@@ -77,7 +77,7 @@ builder.Services.AddRateLimiter(options =>
     // Permite un máximo de 3 envíos por ventana de 1 minuto por dirección IP de origen
     options.AddPolicy("EmailRateLimitPolicy", httpContext =>
     {
-        // Extracción resiliente de la IP del cliente (compatible con proxies reversos como Nginx / AWS CloudFront / ALB)
+        // Extracción resiliente de la IP del cliente (compatible con proxies reversos como Nginx / AWS CloudFront / ALB / Azure)
         var forwardedHeader = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
         var clientIp = forwardedHeader?.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()
                        ?? httpContext.Connection.RemoteIpAddress?.ToString()
@@ -145,7 +145,7 @@ app.UseRateLimiter();
 
 app.UseAuthorization();
 
-// Endpoint de Health Check para AWS Elastic Beanstalk y monitoreo de uptime
+// Endpoint de Health Check para AWS Elastic Beanstalk / Azure App Service y monitoreo de uptime
 app.MapGet("/", () => Results.Ok(new 
 { 
     status = "Healthy", 
@@ -175,5 +175,13 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Arrancar la aplicación y escuchar peticiones
-app.Run();
+// Arrancar la aplicación escuchando dinámicamente en el puerto de Azure / AWS o por defecto
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrEmpty(port))
+{
+    app.Run($"http://0.0.0.0:{port}");
+}
+else
+{
+    app.Run();
+}
