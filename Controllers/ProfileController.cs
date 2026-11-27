@@ -126,16 +126,16 @@ namespace AxelLinaresApi.Controllers
                             "Bidirectional Sync: Direct integration with GitHub Issues REST API featuring resilient retry and rate-limit handling."
                         };
                     }
-                    else if (proj.Title.Contains("Panaderías"))
+                    else if (proj.Title.Contains("Panaderías") || proj.Title.Contains("TahonaEngine"))
                     {
-                        proj.Title = "Enterprise Bakery ERP & POS System";
-                        proj.Badge = "🏛️ Clean Architecture & ACID";
-                        proj.Description = "Full-Stack enterprise ecosystem built under Clean Architecture with .NET 8 Web API, Entity Framework Core, and SQL Server. Implements multi-ingredient inventory control with ACID transactions and a React 18 SPA.";
+                        proj.Title = "TahonaEngine · Bakery DB & Enterprise ERP/POS";
+                        proj.Badge = "🏛️ 15 Tables 3NF & ACID";
+                        proj.Description = "Database engineering & ERP platform under .NET 8 Clean Architecture, EF Core, and SQL Server (15 tables in 3NF, 63,500+ rows across 3 years, covering indexes, ACID transactions) paired with a React 18 + WebGL observability console.";
                         proj.ArchitectureNotes = new List<string>
                         {
-                            "ACID Transactional Consistency: Explicit EF Core transactions deducting recipe ingredients and recording sales without race conditions.",
-                            "Layered Decoupling: Strict separation across Domain, Application, Infrastructure, and Presentation layers enabling isolated unit testing.",
-                            "SQL Optimization: Composite indexes in SQL Server reducing inventory and reporting query latency by 30%."
+                            "ACID Transactional Consistency: Explicit EF Core transactions deducting stock and recalculating weighted average cost with automatic rollback.",
+                            "3-Year Relational Dataset (63,503 Rows): Covering indexes (INCLUDE) and SARGable range queries resolving 36-month analytics with zero key lookups.",
+                            "Interactive DBA Console: Built-in Crow's Foot ER atlas, live endpoint latency workbench, and WebGL shader UI."
                         };
                     }
                     else if (proj.Title.Contains("Portafolio") || proj.Title.Contains("Cloud Engine"))

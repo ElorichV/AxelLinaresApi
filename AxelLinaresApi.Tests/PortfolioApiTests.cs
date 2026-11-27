@@ -268,6 +268,88 @@ namespace AxelLinaresApi.Tests
             Assert.NotNull(project.ArchitectureDiagramUrl);
             Assert.Contains("miro.com", project.ArchitectureDiagramUrl);
         }
+
+        [Fact]
+        public async Task DataSeeder_ExternalAndDiagramUrls_AllTargetVerifiedPublicRepositoriesAndExistingFloorplans()
+        {
+            // Arrange
+            var verifiedPublicRepos = new HashSet<string>(StringComparer.Ordinal)
+            {
+                "Voz-abierta",
+                "TaskMaster-API-Modern-CFML-Showcase",
+                "Serverless-Batch-Order-Processor",
+                "Sistema-de-gestion-para-panaderias",
+                "cv-react-frontend",
+                "nerdearla-mx-pinata",
+                "AxelLinaresApi",
+                "Billetazo",
+                "AWS_Hackathon_Kiro_2026",
+                "PokeD-D",
+                "Voice2Task",
+                "ElorichV",
+                "hacktoberfest2026",
+                "Playwrigth_Demo",
+                "Codigos-de-aprendizaje-y-competencia",
+                "PR-Picafresas-Request",
+                "Proyecto-Aula",
+                "Mohnblumen"
+            };
+
+            var verifiedFloorplans = new HashSet<string>(StringComparer.Ordinal)
+            {
+                "/floorplans/benchengine.html",
+                "/floorplans/voz-abierta.html",
+                "/floorplans/voice2task.html",
+                "/floorplans/panaderia-erp.html",
+                "/floorplans/portafolio-cloud.html",
+                "/floorplans/taskmaster-cfml.html",
+                "/floorplans/qa-ai-playwright.html",
+                "/floorplans/mi-primera-chamba.html",
+                "/floorplans/algoritmia-omi.html"
+            };
+
+            using var fixture = new SqliteInMemoryDbFixture();
+            DataSeeder.Initialize(fixture.Context);
+            var controller = new ProfileController(fixture.Context);
+
+            // Act & Assert across both languages
+            foreach (var lang in new[] { "es", "en" })
+            {
+                var okResult = Assert.IsType<OkObjectResult>(await controller.GetProfile(lang));
+                var profile = Assert.IsType<UserProfile>(okResult.Value);
+
+                Assert.True(Uri.TryCreate(profile.GitHubUrl, UriKind.Absolute, out var ghUri) && ghUri.Scheme == Uri.UriSchemeHttps);
+                Assert.True(Uri.TryCreate(profile.LinkedInUrl, UriKind.Absolute, out var liUri) && liUri.Scheme == Uri.UriSchemeHttps);
+
+                foreach (var exp in profile.Experiences)
+                {
+                    Assert.False(string.IsNullOrWhiteSpace(exp.CompanyUrl));
+                    Assert.True(Uri.TryCreate(exp.CompanyUrl, UriKind.Absolute, out var compUri) && compUri.Scheme == Uri.UriSchemeHttps);
+                }
+
+                foreach (var cert in profile.Certifications)
+                {
+                    Assert.False(string.IsNullOrWhiteSpace(cert.CredentialUrl));
+                    Assert.True(Uri.TryCreate(cert.CredentialUrl, UriKind.Absolute, out var certUri) && certUri.Scheme == Uri.UriSchemeHttps);
+                }
+
+                foreach (var proj in profile.Projects)
+                {
+                    Assert.NotNull(proj.ArchitectureDiagramUrl);
+                    Assert.Contains(proj.ArchitectureDiagramUrl!, verifiedFloorplans);
+
+                    if (proj.ProjectUrl != null)
+                    {
+                        Assert.True(Uri.TryCreate(proj.ProjectUrl, UriKind.Absolute, out var projUri) && projUri.Scheme == Uri.UriSchemeHttps);
+                        Assert.Equal("github.com", projUri.Host);
+                        var segments = projUri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+                        Assert.Equal(2, segments.Length);
+                        Assert.Equal("ElorichV", segments[0]);
+                        Assert.Contains(segments[1], verifiedPublicRepos);
+                    }
+                }
+            }
+        }
     }
 
     public class TestHttpMessageHandler : HttpMessageHandler

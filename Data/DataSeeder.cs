@@ -198,17 +198,17 @@ namespace AxelLinaresApi.Data
                     new Project 
                     { 
                         Id = 4,
-                        Title = "Sistema ERP/POS de Gestión para Panaderías", 
-                        Description = "Ecosistema empresarial Full-Stack diseñado bajo Clean Architecture con .NET 8 Web API, Entity Framework Core y SQL Server. Implementa control de inventario multi-ingrediente con transacciones ACID y cliente SPA en React 18.",
+                        Title = "TahonaEngine · Sistema DB & ERP/POS para Panaderías", 
+                        Description = "Plataforma de ingeniería de base de datos y ERP bajo Clean Architecture (.NET 8, EF Core y SQL Server: 15 tablas en 3FN, +63,500 registros de 3 años, índices cubrientes y transacciones ACID) con consola React 18 + WebGL.",
                         ProjectUrl = "https://github.com/ElorichV/Sistema-de-gestion-para-panaderias",
                         ArchitectureDiagramUrl = "/floorplans/panaderia-erp.html",
                         Category = "Backend",
-                        Badge = "🏛️ Clean Architecture & ACID",
-                        TechStack = new List<string> { ".NET 8 Web API", "C#", "SQL Server", "EF Core", "Clean Architecture", "React 18" },
+                        Badge = "🏛️ 15 Tablas 3FN & ACID",
+                        TechStack = new List<string> { ".NET 8 Web API", "SQL Server (3FN)", "EF Core 8", "Clean Architecture", "React 18 + WebGL" },
                         ArchitectureNotes = new List<string> {
-                            "Consistencia Transaccional ACID: Uso de transacciones explícitas en EF Core para descontar insumos por receta y registrar ventas sin condiciones de carrera.",
-                            "Desacoplamiento por Capas: Separación estricta entre Dominio, Aplicación, Infraestructura y Presentación facilitando pruebas unitarias.",
-                            "Optimización SQL: Índices compuestos en SQL Server que redujeron el tiempo de consulta de reportes e inventario en un 30%."
+                            "Consistencia Transaccional ACID: Transacciones explícitas en EF Core para descuento de stock y recálculo de Costo Promedio Ponderado con rollback automático.",
+                            "Dataset Relacional de 3 Años (63,503 Filas): Índices cubrientes (INCLUDE) y predicados SARGables que resuelven 36 meses de analítica sin Key Lookups.",
+                            "Consola Interactiva DBA: Atlas E-R Crow's Foot integrado, laboratorio de endpoints en vivo y shader WebGL."
                         }
                     },
                     new Project 
